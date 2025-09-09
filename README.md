@@ -1,11 +1,11 @@
-# todoapp-deployed
+# Deployed to-do app
 A very basic to-do app for testing and learning the deployment process on Google Cloud
 
 Here’s a clean, minimal **README.md** you can put in your GitHub repo for the to-do app. It explains the app, the Cloud Run deployment steps (with the same commands you ran), and gives extra context for teammates who may be new to Google Cloud.
 
 ---
 
-# 📝 To-Do App — Google Cloud Run Deployment Demo
+# To-Do App — Google Cloud Run Deployment Demo
 
 This is a very simple Flask to-do application designed to demonstrate how to **containerize** and **deploy** an app to **Google Cloud Run**.
 It doesn’t use any databases — all notes exist only in memory during runtime.
@@ -103,7 +103,7 @@ You can also deploy under a new name (e.g., `todoapp-2`) to test side-by-side ve
 
 * Try editing the app (add new routes, change UI) and redeploy.
 * Experiment with scaling options (`--max-instances`, `--min-instances`) (might increase costs).
-* After this, we’ll practice deploying a **small ML model** before moving to full production models.
+* After this, we’ll practice deploying a **small pre-trained ML model** before moving to full production models.
 
 ---
 
