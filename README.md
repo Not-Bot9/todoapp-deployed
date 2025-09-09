@@ -1,9 +1,4 @@
-# Deployed to-do app
-A very basic to-do app for testing and learning the deployment process on Google Cloud
 
-Here’s a clean, minimal **README.md** you can put in your GitHub repo for the to-do app. It explains the app, the Cloud Run deployment steps (with the same commands you ran), and gives extra context for teammates who may be new to Google Cloud.
-
----
 
 # To-Do App — Google Cloud Run Deployment Demo
 
