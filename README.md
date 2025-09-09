@@ -1,9 +1,9 @@
 
 
-# To-Do App — Google Cloud Run Deployment Demo
+# To-Do App - Google Cloud Run Deployment Demo
 
 This is a very simple Flask to-do application designed to demonstrate how to **containerize** and **deploy** an app to **Google Cloud Run**.
-It doesn’t use any databases — all notes exist only in memory during runtime.
+It doesn’t use any databases - all notes exist only in memory during runtime.
 
 The main purpose of this repo is for the AI/ML team to **learn Cloud Run deployment workflow** before deploying larger ML models.
 
