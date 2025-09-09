@@ -71,11 +71,11 @@ You can also deploy under a new name (e.g., `todoapp-2`) to test side-by-side ve
 * If you hit errors during build/deploy, try the **Gemini CLI tool** available in Cloud Shell.
 
   * Open a **new Cloud Shell tab**
-  * Navigate (`cd`) into the project directory (not home `~`)
+  * Navigate (`cd`) into the project directory
   * Run:
 
     ```bash
-    gemini help
+    gemini
     ```
 
   Gemini will use your local context (the app files) to debug.
