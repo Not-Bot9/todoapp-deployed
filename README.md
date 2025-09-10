@@ -1,105 +1,127 @@
+# ML Deployment Demo – Iris Classifier on Google Cloud Run
 
-
-# To-Do App - Google Cloud Run Deployment Demo
-
-This is a very simple Flask to-do application designed to demonstrate how to **containerize** and **deploy** an app to **Google Cloud Run**.
-It doesn’t use any databases - all notes exist only in memory during runtime.
-
-The main purpose of this repo is for the AI/ML team to **learn Cloud Run deployment workflow** before deploying larger ML models.
+This repository demonstrates how to **train, save, and deploy a simple ML model** using [Google Cloud Run](https://cloud.google.com/run).
+We use the classic **Iris dataset** to build a small classification model that predicts flower species based on sepal/petal measurements.
 
 ---
 
-## Prerequisites
+## Project Overview
 
-1. A **Google Cloud account** with billing enabled.
-2. **Google Cloud SDK** (gcloud) installed, OR use **Cloud Shell** from the GCP Console (recommended).
-3. Enable the **Cloud Run API** and **Cloud Build API** in your project (if not already enabled):
-
-   ```bash
-   gcloud services enable run.googleapis.com cloudbuild.googleapis.com
-   ```
+* **Model:** Logistic Regression pipeline (scikit-learn) trained on the Iris dataset
+* **Exported Artifact:** `model.joblib` (serialized model file)
+* **Serving Framework:** Flask + Gunicorn
+* **Deployment Target:** Google Cloud Run (serverless, auto-scaling, pay-per-use)
 
 ---
 
-## Deploying to Cloud Run
+## Repository Structure
 
-From Cloud Shell or your terminal:
-
-1. **Clone this repo** (or open it in Cloud Shell):
-
-   ```bash
-   git clone https://github.com/<your-org>/<repo-name>.git
-   cd <repo-name>/test_app
-   ```
-
-2. **Deploy the app to Cloud Run** (from inside the project folder):
-
-   ```bash
-   gcloud run deploy todoapp --source . --region us-east1 --allow-unauthenticated
-   ```
-
-   * `--source .` tells Cloud Build to build from the current directory.
-   * `--region us-east1` chooses a deployment region (change if needed).
-   * `--allow-unauthenticated` lets anyone access the app.
-
-3. Wait for the build → deploy → traffic routing steps to complete.
-   At the end you’ll get a **Service URL** like:
-
-   ```
-   https://todoapp-xxxxxx-uc.a.run.app
-   ```
-
-4. Open the URL in your browser to see the app live.
-
----
-
-## Redeploying (with new changes)
-
-If you update the code and want to redeploy:
-
-```bash
-gcloud run deploy todoapp --source . --region us-east1
+```
+.
+├── app.py              # Flask app serving the model
+├── iris_training.ipynb # Training notebook for creating and exporting the model
+├── model.joblib        # Trained scikit-learn model (exported)
+├── requirements.txt    # Python dependencies
+├── Dockerfile          # Container definition
+└── README.md           # This file
 ```
 
-You can also deploy under a new name (e.g., `todoapp-2`) to test side-by-side versions.
+---
+
+## Local Setup (Optional)
+
+If you want to run the app locally before deploying:
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the app
+gunicorn -b :8080 app:app
+```
+
+Then open: [http://localhost:8080](http://localhost:8080)
+
+---
+
+## Deploying to Google Cloud Run
+
+1. Make sure you have [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and initialized.
+
+   ```bash
+   gcloud auth login
+   gcloud config set project YOUR_PROJECT_ID
+   ```
+
+2. Deploy the service:
+
+   ```bash
+   gcloud run deploy iris-classifier \
+     --source . \
+     --region us-east1 \
+     --allow-unauthenticated
+   ```
+
+3. Once deployed, you’ll get a **service URL** like:
+
+   ```
+   https://iris-classifier-xxxxxx-uc.a.run.app
+   ```
+
+---
+
+## Example Request
+
+Send a POST request with flower measurements (`sepal length`, `sepal width`, `petal length`, `petal width`):
+
+```bash
+URL="https://iris-classifier-xxxxxx-uc.a.run.app"
+curl -s -X POST "$URL/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"instances":[[5.1,3.5,1.4,0.2],[6.7,3.0,5.2,2.3]]}' | jq
+```
+
+**Sample Output:**
+
+```json
+{
+  "predictions": [
+    {
+      "label": "setosa",
+      "label_id": 0,
+      "probs": [0.9808, 0.0191, 0.0000]
+    },
+    {
+      "label": "virginica",
+      "label_id": 2,
+      "probs": [0.00005, 0.0434, 0.9564]
+    }
+  ]
+}
+```
 
 ---
 
 ## Troubleshooting
 
-* Always make sure you’re in the **directory that contains your app files** before running `gcloud run deploy`.
-* If you hit errors during build/deploy, try the **Gemini CLI tool** available in Cloud Shell.
+* Always check **Cloud Build logs** if a deployment fails:
+  [Cloud Build Logs Console](https://console.cloud.google.com/cloud-build)
+* If the service URL shows `SERVICE UNAVAILABLE`:
 
-  * Open a **new Cloud Shell tab**
-  * Navigate (`cd`) into the project directory
-  * Run:
+  * Confirm that the container **listens on port `8080`**.
+  * Verify that `requirements.txt` contains compatible versions.
+  * Check **Cloud Run logs** in [Logs Explorer](https://console.cloud.google.com/logs).
 
-    ```bash
-    gemini
-    ```
-
-  Gemini will use your local context (the app files) to debug.
-
----
-
-## Notes
-
-* We’re using **Dockerfile build** by default. If you don’t include a Dockerfile, Cloud Run will try Buildpacks.
-* Default machine spec is 1 CPU, 512MB RAM. For heavier workloads you can increase it with:
-
-  ```bash
-  gcloud run deploy todoapp --source . --region us-east1 --cpu=1 --memory=2Gi
-  ```
-* The app is ephemeral (no DB). Restarting will reset your notes.
+ You can also use the built-in **Gemini CLI in Cloud Shell** for troubleshooting, but always run it **inside the app directory** (not home `~`) so it has context.
 
 ---
 
 ## Next Steps
 
-* Try editing the app (add new routes, change UI) and redeploy.
-* Experiment with scaling options (`--max-instances`, `--min-instances`) (might increase costs).
-* After this, we’ll practice deploying a **small pre-trained ML model** before moving to full production models.
+* Extend the app with more complex models.
 
 ---
-
-
