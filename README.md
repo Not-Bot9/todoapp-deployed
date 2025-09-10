@@ -57,7 +57,9 @@ Then open: [http://localhost:8080](http://localhost:8080)
    gcloud config set project YOUR_PROJECT_ID
    ```
 
-2. Deploy the service:
+2. cd into the directry containing the deployment files.
+
+3. Deploy the service:
 
    ```bash
    gcloud run deploy iris-classifier \
@@ -66,7 +68,7 @@ Then open: [http://localhost:8080](http://localhost:8080)
      --allow-unauthenticated
    ```
 
-3. Once deployed, you’ll get a **service URL** like:
+4. Once deployed, you’ll get a **service URL** like:
 
    ```
    https://iris-classifier-xxxxxx-uc.a.run.app
